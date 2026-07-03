@@ -1,6 +1,31 @@
-"use client";
+ "use client";
 
-import { useEffect, useState, useRef } from "react";
+// import { useEffect, useState, useRef } from "react";
+// import { DitherShader } from "@/components/ui/dither-shader";
+// import Lenis from "lenis";
+// import gsap from "gsap";
+// import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import AboutSection from "@/app/about/page"; 
+// import { Marquee } from "@/components/ui/marquee";
+// import PortfolioSection from "@/app/portfolio/page";
+// import Switch from "@/components/Switch"; 
+
+// gsap.registerPlugin(ScrollTrigger);
+
+// import {
+//   FaReact, FaHtml5, FaCss3Alt, FaJsSquare, FaPython, FaGitAlt, FaGithub,
+// } from "react-icons/fa";
+
+// import {
+//   SiNextdotjs, SiTailwindcss, SiMongodb, SiMysql, SiExpress,
+//   SiCplusplus, SiFramer, SiRedux, SiTypescript,
+// } from "react-icons/si";
+
+// // --- SCRAMBLE TEXT COMPONENT ---
+// function ScrambleText({ children, className, onDone }) {
+//   const ref = useRef(null);
+//   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+import { useEffect, useState, useRef, ReactNode } from "react";
 import { DitherShader } from "@/components/ui/dither-shader";
 import Lenis from "lenis";
 import gsap from "gsap";
@@ -22,10 +47,15 @@ import {
 } from "react-icons/si";
 
 // --- SCRAMBLE TEXT COMPONENT ---
-function ScrambleText({ children, className, onDone }) {
+interface ScrambleTextProps {
+  children: ReactNode;
+  className?: string;
+  onDone?: () => void;
+}
+
+function ScrambleText({ children, className, onDone }: ScrambleTextProps) {
   const ref = useRef(null);
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-
   useEffect(() => {
     const text = children || "";
     const node = ref.current;
