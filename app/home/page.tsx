@@ -1,31 +1,6 @@
- "use client";
+"use client";
 
-// import { useEffect, useState, useRef } from "react";
-// import { DitherShader } from "@/components/ui/dither-shader";
-// import Lenis from "lenis";
-// import gsap from "gsap";
-// import { ScrollTrigger } from "gsap/ScrollTrigger";
-// import AboutSection from "@/app/about/page"; 
-// import { Marquee } from "@/components/ui/marquee";
-// import PortfolioSection from "@/app/portfolio/page";
-// import Switch from "@/components/Switch"; 
-
-// gsap.registerPlugin(ScrollTrigger);
-
-// import {
-//   FaReact, FaHtml5, FaCss3Alt, FaJsSquare, FaPython, FaGitAlt, FaGithub,
-// } from "react-icons/fa";
-
-// import {
-//   SiNextdotjs, SiTailwindcss, SiMongodb, SiMysql, SiExpress,
-//   SiCplusplus, SiFramer, SiRedux, SiTypescript,
-// } from "react-icons/si";
-
-// // --- SCRAMBLE TEXT COMPONENT ---
-// function ScrambleText({ children, className, onDone }) {
-//   const ref = useRef(null);
-//   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-import { useEffect, useState, useRef, ReactNode } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DitherShader } from "@/components/ui/dither-shader";
 import Lenis from "lenis";
 import gsap from "gsap";
@@ -34,6 +9,7 @@ import AboutSection from "@/app/about/page";
 import { Marquee } from "@/components/ui/marquee";
 import PortfolioSection from "@/app/portfolio/page";
 import Switch from "@/components/Switch"; 
+import Text3DFlip from "@/components/ui/text-3d-flip"; // <-- IMPORTED TEXT 3D FLIP
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,68 +22,9 @@ import {
   SiCplusplus, SiFramer, SiRedux, SiTypescript,
 } from "react-icons/si";
 
-// --- SCRAMBLE TEXT COMPONENT ---
-interface ScrambleTextProps {
-  children: ReactNode;
-  className?: string;
-  onDone?: () => void;
-}
-
-function ScrambleText({ children, className, onDone }: ScrambleTextProps) {
-  const ref = useRef(null);
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-  useEffect(() => {
-    const text = children || "";
-    const node = ref.current;
-    if (!node) return;
-
-    const spans = text.split("").map((char) => {
-      const span = document.createElement("span");
-      span.textContent = "";
-      span.style.display = "inline-block";
-      node.appendChild(span);
-      return { span, char };
-    });
-
-    const staggerDelay = 40;
-    const scrambleDuration = 1500;
-    const startTime = performance.now();
-
-    function tick(now) {
-      let allDone = true;
-      spans.forEach(({ span, char }, i) => {
-        const elapsed = now - startTime - i * staggerDelay;
-        if (elapsed < 0) {
-          span.textContent = "";
-          allDone = false;
-        } else if (elapsed < scrambleDuration) {
-          span.textContent = chars[Math.floor(Math.random() * chars.length)];
-          allDone = false;
-        } else {
-          span.textContent = char === " " ? "\u00A0" : char;
-        }
-      });
-
-      if (!allDone) {
-        requestAnimationFrame(tick);
-      } else if (onDone) {
-        onDone();
-      }
-    }
-
-    requestAnimationFrame(tick);
-    return () => {
-      spans.forEach(({ span }) => span.remove());
-    };
-  }, [children, onDone]);
-
-  return <span ref={ref} className={className} />;
-}
-
 // --- MAIN HOME PAGE ---
 export default function Home() {
   const [time, setTime] = useState("");
-  const [showCard, setShowCard] = useState(false);
   const [isDark, setIsDark] = useState(false); 
   
   const scrollWrapperRef = useRef(null);
@@ -207,12 +124,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleScrambleDone = () => {
-    setTimeout(() => setShowCard(true), 300);
-  };
-
 return (
-  // Use Shadcn background and text classes
   <main className="min-h-screen flex flex-col gap-32 bg-background text-foreground transition-colors duration-300">
       
       {/* Navbar */}
@@ -232,28 +144,34 @@ return (
       <section className="flex-1 pb-16 pl-4 pr-4 pt-32">
         <div className="mx-auto max-w-[1600px] flex flex-col items-center">
           <div className="relative z-0">
-            <h1 className="font-[family-name:var(--font-bebas)] text-[9rem] md:text-[13rem] font-normal leading-none tracking-tight text-center">
-              <ScrambleText onDone={handleScrambleDone}>Sankalp Hardiya</ScrambleText>
-            </h1>
+            {/* Name with Text 3D Flip Effect */}
+            <Text3DFlip
+              className="bg-background font-[family-name:var(--font-bebas)] text-[9rem] md:text-[13rem] font-normal leading-none tracking-tight text-center"
+              textClassName="bg-background text-foreground"
+              flipTextClassName="bg-background text-foreground"
+              rotateDirection="top"
+              staggerDuration={0.03}
+              staggerFrom="first"
+              transition={{ type: "spring", damping: 25, stiffness: 160 }}
+            >
+              Sankalp Hardiya
+            </Text3DFlip>
           </div>
 
           <div ref={scrollWrapperRef} className="mt-8 w-full flex flex-col items-center">
-            <div className={`transition-all duration-1000 ease-out ${showCard ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-12 scale-95"}`}>
-              {/* Use bg-card and border-border here */}
-              <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-3 shadow-2xl transition-colors duration-300">
-                <DitherShader
-                  src="/profile.jpg"
-                  gridSize={1}
-                  ditherMode="bayer"
-                  colorMode="duotone"
-                  primaryColor="#2C2930"
-                  secondaryColor="#9D98A3"
-                  threshold={0.45}
-                  className="h-[450px] w-[400px] sm:h-[550px] sm:w-[550px] rounded-xl"
-                />
-                <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md text-white p-4 rounded-lg border border-white/10">
-                  <p className="text-sm font-bold tracking-widest uppercase text-neutral-300">Creative Developer</p>
-                </div>
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-3 shadow-2xl transition-colors duration-300">
+              <DitherShader
+                src="/profile.jpg"
+                gridSize={1}
+                ditherMode="bayer"
+                colorMode="duotone"
+                primaryColor="#2C2930"
+                secondaryColor="#9D98A3"
+                threshold={0.45}
+                className="h-[450px] w-[400px] sm:h-[550px] sm:w-[550px] rounded-xl"
+              />
+              <div className="absolute bottom-6 left-6 right-6 bg-black/60 backdrop-blur-md text-white p-4 rounded-lg border border-white/10">
+                <p className="text-sm font-bold tracking-widest uppercase text-neutral-300">Creative Developer</p>
               </div>
             </div>
 
@@ -354,4 +272,3 @@ return (
     </main>
   );
 }
-// original
